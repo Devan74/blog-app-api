@@ -15,7 +15,7 @@ require('dotenv').config();
 const salt = bcrypt.genSaltSync(10);
 const secret = process.env.KEY;
 
-app.use(cors({credentials:true,origin:'https://glistening-crostata-17469d.netlify.app'}));
+app.use(cors({credentials:true,origin:'https://deva-blog-app.netlify.app'}));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
