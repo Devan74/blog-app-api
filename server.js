@@ -11,6 +11,7 @@ const multer = require('multer');
 const uploadMiddleware = multer({ dest: 'uploads/' });
 const fs = require('fs');
 require('dotenv').config();
+const server=app;
 
 const salt = bcrypt.genSaltSync(10);
 const secret = process.env.KEY;
@@ -37,23 +38,29 @@ app.post('/register', async (req,res) => {
   }
 });
 
-app.post('/login', async (req,res) => {
-  const {username,password} = req.body;
-  const userDoc = await User.findOne({username});
-  const passOk = bcrypt.compareSync(password, userDoc.password);
-  if (passOk) {
-    // logged in
-    jwt.sign({username,id:userDoc._id}, secret, {}, (err,token) => {
-      if (err) throw err;
-      res.cookie('token', token).json({
-        id:userDoc._id,
-        username,
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  const userDoc = await User.findOne({ username });
+
+  if (userDoc) {
+    const passOk = bcrypt.compareSync(password, userDoc.password);
+    if (passOk) {
+      // logged in
+      jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
+        if (err) throw err;
+        res.cookie('token', token).json({
+          id: userDoc._id,
+          username,
+        });
       });
-    });
+    } else {
+      res.status(400).json('wrong credentials');
+    }
   } else {
-    res.status(400).json('wrong credentials');
+    res.status(400).json('user not found');
   }
 });
+
 
 app.get('/profile', (req,res) => {
   const {token} = req.cookies;
@@ -139,7 +146,7 @@ app.get('/post/:id', async (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`App is running on PORT ${PORT}`);
 })
 //
