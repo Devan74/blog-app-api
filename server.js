@@ -16,7 +16,7 @@ const server=app;
 const salt = bcrypt.genSaltSync(10);
 const secret = process.env.KEY;
 
-app.use(cors({credentials:true,origin:'https://blog-app-z62u.onrender.com'}));
+app.use(cors({credentials:true,origin:'https://deva-blog-app.netlify.app'}));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
